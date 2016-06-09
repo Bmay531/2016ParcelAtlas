@@ -8,31 +8,31 @@
 # Copyright:   (c) BMay 2016
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
-
-def main():
-    pass
-
-if __name__ == '__main__':
-    main()
 # Import Modules
 import MxdFunctions
 import arcpy, os
 from arcpy import env
 arcpy.env.overwriteOutput = True
+fileDir = os.path.dirname(os.path.realpath('__file__'))
+print fileDir
+PfileDir = os.path.join(fileDir, "../build")
+print PfileDir
+
+#Specify the map document
+mapPath = os.path.join(fileDir,"AC_ParcelAtlas.mxd")
+mxd = arcpy.mapping.MapDocument(mapPath)
 
 # Main Variables #
-ws = "C:\\AC\\Projects\\2016TaxMapPrinting\\build"
+ws = fileDir
 # Data source for the map books #
-gdb = "C:\\AC\\Projects\\2016TaxMapPrinting\\source\\TaxMaps\\AC_CadastralTax.gdb"
+gdb = "C:\\AC\\Data\\Geodatabases\\AC_Cadastral.gdb"
 # List of Unit Numbers #
-DocA = "C:\\AC\\Projects\\2016TaxMapPrinting\\processing\\Lists\\Unum.csv"
+DocA = os.path.join(fileDir,"Lists\\Unum.csv")
 # List of Unit Names #
-DocB = "C:\\AC\\Projects\\2016TaxMapPrinting\\processing\\Lists\\U_nits.csv"
+DocB = os.path.join(fileDir,"Lists\\U_nits.csv")
 # List of Locator Frame bounding coordinates
-DocC = "C:\\AC\\Projects\\2016TaxMapPrinting\\processing\\Lists\\UnitExtent.csv"
-# Mxd to be used as a template #
-mxdP = "C:\\AC\\Projects\\2016TaxMapPrinting\\buildTest\\AerialMXD\\00.mxd"
-#mxdP = "C:\\AC\\Projects\\2016TaxMapPrinting\\buildTest\\RegMXD\\00.mxd"
+DocC = os.path.join(fileDir, "Lists\\UnitExtent.csv")
+
 # Target FC and FDS vars assigned
 fc1 = "AC_Splits2016"
 fc2 = "AC_Road_ROWs_Simple"
@@ -40,21 +40,15 @@ fc3 = "AC_Subcode"
 fc4 = "Orig"
 fds1 = "AC_Merge"
 fds2 = "Units_Orig"
-# Target Fields vars assigned
-Calcfld = "InUnit"
-# New Field vals assigned
-s1 = "Y"
-s2 = "N"
+
 # Layer wild cards in the template mxd #
 LayerKey1 = "Index"
-LayerKey2 = "FocusFrame"
-LayerKey3 = "QSIndex"
+
 # strings for FC naming #
 string1 = "_Index"
-string2 =""
-string3 = "_Lbl"
+
 # Path for new PDF
-OutPath = "C:\\AC\\Projects\\2016TaxMapPrinting\\buildTest\\ap1"
+OutPath = os.path.join(PfileDir, "Trial1")
 
 # Define local functions
 def group(t,n):
@@ -84,11 +78,13 @@ with open (DocC, 'r') as c:
     xMax = list(zip(*NewTup)[2])
     yMax = list(zip(*NewTup)[3])
 Tuple1 = zip(ListA, ListB, xMin, yMin, xMax, yMax)
+print Tuple1
 
+mxd.dataDrivenPages.refresh()
+
+"""
 # Iterate list to produce tax maps
 for tup in Tuple1:
-    # Set mxd to Template mxd
-    mxd = arcpy.mapping.MapDocument(mxdP)
 
     # Refresh DDP
     mxd.dataDrivenPages.refresh()
@@ -106,23 +102,6 @@ for tup in Tuple1:
     print xMi
     print "Data for unit:   " + uname + " is now being processed"
 
-    # Recalculate field in FC to toggle T F values by unit for synbology class purposes
-    # Splits16 field calculation
-    MxdFunctions.TogTF(gdb,fds1,fc1,Calcfld,unum,s1,s2)
-    # AC_Road_ROW_Simple field calculation
-    MxdFunctions.TogTF(gdb,fds1,fc2,Calcfld,unum,s1,s2)
-    # AC_Subcode field calculation
-    MxdFunctions.TogTF(gdb,fds1,fc3,Calcfld,unum,s1,s2)
-    # AC_UnitsOrig field calculation
-    MxdFunctions.TogTF(gdb,fds2,fc4,Calcfld,unum,s1,s2)
-
-    # Replace data source in mxd layers from template to next unit
-    MxdFunctions.replaceD_Source(mxd,LayerKey1,gdb,uname,string1)
-
-    MxdFunctions.replaceD_Source(mxd,LayerKey2,gdb,uname,string2)
-
-    MxdFunctions.replaceD_Source(mxd,LayerKey3,gdb,uname,string3)
-
     # Refresh DDP
     mxd.dataDrivenPages.refresh()
 
@@ -133,10 +112,7 @@ for tup in Tuple1:
 
     mxd.dataDrivenPages.refresh()
 
-    # Save Mxd to file
-    mxd.saveACopy(os.path.join(ws,unum +".mxd"))
-
-    # Export new mxd to PDF
+    #Export new mxd to PDF
     MxdFunctions.MxdExport(mxd,OutPath)
 
-    del mxd
+    del mxd"""

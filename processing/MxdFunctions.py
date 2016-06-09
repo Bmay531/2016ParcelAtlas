@@ -1,10 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:         Mxd Functions
-# Purpose:      Functions for Extending 1 DDP.mxd to many
-#               Function to calculate field from s1 to s2 based on unit number
-#               Function to modify SQL query within label class settings in an DDP Mxd
-#               Function alter layer data source settings in an DDP Mxd
-#               Function to set locator frame coordinates
+# Purpose:      Function to set locator frame coordinates
 #               Function to export a DDP Mxd to PDF
 #
 # Author:      BMay
@@ -35,36 +31,7 @@ s2 = "N"
 #mxda = arcpy.mapping.MapDocument("C:\\AC\\Projects\\2017TaxMaps\\build\\01.mxd")
 OutPath = "C:\\AC\\Projects\\2017TaxMaps\\buildTest\\TESTp1"
 
-################################################################################
-# Define Functions
-################################################################################
-#Function to calculate field from s1 to s2 based on unit number
-################################################################################
-def TogTF(gdb,fds1,fc1,Calcfld,unum,s1,s2):
-    exp = '''U_Calc(!ExtraText1!)'''
-    CB = "def U_Calc(Input):\n\tif Input == '''" + unum + "''':\n\t\tOutput = '''"+ s1 +"'''\n\t\treturn Output\n\telse:\n\t\tOutput = '''" + s2 + "'''\n\t\treturn Output"
-    arcpy.env.workspace = gdb
-    fds1 = arcpy.ListDatasets(fds1)[0]
-    print fds1
-    fc1 = arcpy.ListFeatureClasses(fc1,"",fds1)[0]
-    print fc1
-    arcpy.CalculateField_management(fc1,Calcfld,exp,"PYTHON_9.3",CB)
-    pass
-if __name__ == '__main__':
-    TogTF(gdb,Lx,Calcfld,unum,s1,s2)
-################################################################################
-# Function to alter layer data source settings in an DDP Mxd
-################################################################################
-def replaceD_Source(mxd,LayerKey,gdb,uname,string):
-    UxString = uname + string
-    layer = arcpy.mapping.ListLayers(mxd,LayerKey)
-    print layer
-    for lyr in layer:
-        lyr.replaceDataSource(gdb, "",UxString,False)
-    return mxd
-    pass
-if __name__ == '__main__':
-    replaceD_Source(mxd,LayerKey,gdb,uname,string)
+
 ################################################################################
 # Function to set locator frame coordinates
 #   Note: The mxd locator frame must be set to automatic for this to work.
@@ -88,6 +55,11 @@ def MxdLocExtent(mxd, xMinVal, yMinVal, xMaxVal, yMaxVal):
     pass
 if __name__ == '__main__':
     MxdLocExtent(mxd, xMinVal, yMinVal, xMaxVal, yMaxVal)
+
+
+
+
+
 ################################################################################
 # Function to export a DDP Mxd to PDF
 ################################################################################
